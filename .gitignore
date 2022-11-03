@@ -1,0 +1,8 @@
+.well-known
+.idea
+.htaccess
+cgi-bin
+error_log
+composer.json
+composer.lock
+vendor/
