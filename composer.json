@@ -1,0 +1,17 @@
+{
+  "name": "evanh.shumakov/boris.bot",
+  "type": "project",
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^7.4",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "badfarm/zanzara": "^0.8.0",
+    "league/flysystem": "^2.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "BotBoris\\": "lib/"
+    }
+  }
+}
