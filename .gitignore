@@ -1,6 +1,6 @@
 .well-known
 .idea
-.htaccess
+/.htaccess
 cgi-bin
 error_log
 composer.lock
