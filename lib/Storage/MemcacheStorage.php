@@ -43,4 +43,20 @@ class MemcacheStorage implements Storage
             $this->client->set('chat_ids', $ids->toArray());
         }
     }
+
+    public function set(string $key, $value, int $expire): void
+    {
+        $this->client->set($key, $value, 0, $expire);
+    }
+
+    /**
+     * @param string $key
+     * @return array|string|false
+     *
+     * Returns FALSE on failure, key is not found or key is an empty array.
+     */
+    public function get(string $key)
+    {
+        return $this->client->get($key);
+    }
 }

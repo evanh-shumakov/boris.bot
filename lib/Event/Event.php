@@ -69,6 +69,7 @@ abstract class Event
         foreach ($this->getStorage()->getChatIds() as $chatId) {
             $telegram->sendMessage($this->getMessage(), ['chat_id' => $chatId]);
         }
+        $this->getStorage()->set(static::class, time(), 60 * 60 * 24);
     }
 
     abstract public function isConditionCompleted(): bool;

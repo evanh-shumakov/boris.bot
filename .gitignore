@@ -5,3 +5,5 @@ cgi-bin
 error_log
 composer.lock
 vendor/
+.user.ini
+php.ini
