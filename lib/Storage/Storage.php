@@ -6,7 +6,7 @@ use BotBoris\Collection\UniqueStringCollection;
 
 interface Storage
 {
-    public function set(string $key, $value, int $expire): void;
+    public function set(string $key, array|string $value, int $expire): void;
 
     /**
      * @param string $key
@@ -14,7 +14,7 @@ interface Storage
      *
      * Returns FALSE on failure, key is not found or key is an empty array.
      */
-    public function get(string $key);
+    public function get(string $key): array|string|false;
 
     public function getToken(): string;
 
