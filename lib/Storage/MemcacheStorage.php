@@ -55,7 +55,7 @@ class MemcacheStorage implements Storage
      *
      * Returns FALSE on failure, key is not found or key is an empty array.
      */
-    public function get(string $key)
+    public function get(string $key): array|string|false
     {
         return $this->client->get($key);
     }
