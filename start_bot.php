@@ -1,5 +1,4 @@
 <?php
-
 if (php_sapi_name() !== 'cli') { // only run from command line
     exit();
 }
