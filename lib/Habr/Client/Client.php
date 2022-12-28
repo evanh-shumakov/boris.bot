@@ -8,7 +8,7 @@ interface Client
 {
     const TIME_WEEK = 'weekly';
 
-    const TAG_CODING = 'программирование';
+    const TAG_PROGRAMMING = 'programming';
 
-    public function getBestArticle(string $time, string $tagContains): ?Article;
+    public function getBestArticleByTag(string $time, string $tags): ?Article;
 }

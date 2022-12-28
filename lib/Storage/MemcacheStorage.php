@@ -59,4 +59,9 @@ class MemcacheStorage implements Storage
     {
         return $this->client->get($key);
     }
+
+    public function delete(string $key): void
+    {
+        $this->client->delete($key);
+    }
 }

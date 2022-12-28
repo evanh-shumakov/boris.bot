@@ -67,10 +67,10 @@ class EventCollection implements \Iterator
         return $this->current();
     }
 
-    public function setStorage(Storage $getStorage): void
+    public function setStorage(Storage $storage): void
     {
         foreach ($this->collection as $event) {
-            $event->setStorage($getStorage);
+            $event->setStorage($storage);
         }
     }
 }

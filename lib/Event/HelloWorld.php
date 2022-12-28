@@ -6,7 +6,7 @@ class HelloWorld extends Event
 {
     public function isConditionCompleted(): bool
     {
-        return true;
+        return false;
     }
 
     public function getMessage(): string

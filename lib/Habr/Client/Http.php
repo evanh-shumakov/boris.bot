@@ -11,46 +11,29 @@ class Http implements Client
 
     const DOMAIN = 'habr.com';
 
-    const TOP_NEWS_ENDPOINT_TEMPLATE = '/ru/news/top/';
+    const TOP_TAG_ENDPOINT_TEMPLATE = '/ru/hub/%s/top/%s/';
 
-    public function getBestArticle(string $time, string $tagContains): ?Article
+    public function getBestArticleByTag(string $time, string $tag): ?Article
     {
-        $url = self::PROTOCOL
-            . self::DOMAIN
-            . self::TOP_NEWS_ENDPOINT_TEMPLATE
-            . $time
-            . '/';
-        $pageNumber = 1;
-        while ($page = file_get_contents($url)) {
-            $dom = new Crawler($page);
-            $article = $this->getTagArticleFromPage($dom, $tagContains);
-            if (! is_null($article)) {
-                return $article;
-            }
-            $url = $url . "page" . ++$pageNumber . "/";
+        $endpoint = sprintf(self::TOP_TAG_ENDPOINT_TEMPLATE, $tag, $time);
+        $url = self::PROTOCOL . self::DOMAIN . $endpoint;
+        $page = $this->getContents($url);
+        if (! $page) {
+            print "No page\n";
+            return null;
         }
-        return null;
+        $dom = new Crawler($page);
+        $nodes = $dom->filter('.tm-article-snippet');
+        return $this->makeArticle($nodes->first());
     }
 
-    private function getTagArticleFromPage(
-        Crawler $page,
-        string $tagContains
-    ): ?Article
+    public function getContents(string $link): false|string
     {
-        $nodes = $page->filter('.tm-article-snippet');
-        foreach ($nodes as $node) {
-            $snippet = new Crawler($node);
-            $tagLinks = $snippet->filter(
-                '.tm-article-snippet__hubs-item-link'
-            );
-            foreach ($tagLinks as $tagLink) {
-                $tag = $tagLink->firstChild->textContent;
-                if (str_contains(mb_strtolower($tag), $tagContains)) {
-                    return $this->makeArticle($snippet);
-                }
-            }
+        try {
+            return file_get_contents($link);
+        } catch (\Throwable) {
+            return false;
         }
-        return null;
     }
 
     private function makeArticle(Crawler $snippet): Article

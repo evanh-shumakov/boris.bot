@@ -9,7 +9,8 @@ class CodingDay extends Event
     public function isConditionCompleted(): bool
     {
         return $this->isItTheDay()
-            && $this->wasTheEventToday();
+            && $this->isItTheTime()
+            && ! $this->wasTheEventToday();
     }
 
     public function getMessage(): string
@@ -20,18 +21,38 @@ class CodingDay extends Event
 
     private function isItTheDay(): bool
     {
+        return true;
         $date = new \DateTime();
-        return $date->format('L') === 'thursday';
+        return $date->format('l') === 'Thursday';
+    }
+
+    private function isItTheTime(): bool
+    {
+        $date = new \DateTime();
+        $hours = intval($date->format('G'));
+        return $hours >= 7;
     }
 
     private function wasTheEventToday(): bool
     {
-        return boolval($this->getStorage()->get(self::class));
+        $lastExecutionTimeStamp = $this->getStorage()->get(self::class);
+        if (! $lastExecutionTimeStamp) {
+            return false;
+        }
+        $lastExecution = new \DateTime();
+        $lastExecution->setTimestamp($lastExecutionTimeStamp);
+        $lastExecutionDayNumber = $lastExecution->format('Y-m-d');
+        $today = new \DateTime();
+        $todayDayNumber = $today->format('Y-m-d');
+        return $lastExecutionDayNumber === $todayDayNumber;
     }
 
     private function getBestHabrWeeklyCodingArticle(): ?Article
     {
         $habr = new \BotBoris\Habr\Client\Http();
-        return $habr->getBestArticle($habr::TIME_WEEK, $habr::TAG_CODING);
+        return $habr->getBestArticleByTag(
+            $habr::TIME_WEEK,
+            $habr::TAG_PROGRAMMING
+        );
     }
 }
