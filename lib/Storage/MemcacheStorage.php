@@ -8,27 +8,30 @@ class MemcacheStorage implements Storage
 {
     private \Memcache $client;
 
+    private string $prefix;
+
     public function __construct()
     {
         $this->client = new \Memcache();
         $host = 'unix:///home/i37394/.memcached/memcached.sock';
         $port = 0;
         $this->client->connect($host, $port);
+        $this->prefix = __DIR__ . '/';
     }
 
     public function getToken(): string
     {
-        return $this->client->get('token');
+        return $this->get('token');
     }
 
     public function setToken(string $token): void
     {
-        $this->client->set('token', $token);
+        $this->set('token', $token);
     }
 
     public function getChatIds(): UniqueStringCollection
     {
-        $ids = $this->client->get('chat_ids');
+        $ids = $this->get('chat_ids');
         if (! $ids) {
             return new UniqueStringCollection();
         }
@@ -40,13 +43,13 @@ class MemcacheStorage implements Storage
         $ids = $this->getChatIds();
         if (! $ids->has($chatId)) {
             $ids->add($chatId);
-            $this->client->set('chat_ids', $ids->toArray());
+            $this->set('chat_ids', $ids->toArray());
         }
     }
 
-    public function set(string $key, $value, int $expire): void
+    public function set(string $key, $value, int $expire = null): void
     {
-        $this->client->set($key, $value, 0, $expire);
+        $this->client->set($this->prefix . $key, $value, 0, $expire);
     }
 
     /**
@@ -57,11 +60,11 @@ class MemcacheStorage implements Storage
      */
     public function get(string $key): array|string|false
     {
-        return $this->client->get($key);
+        return $this->client->get($this->prefix . $key);
     }
 
     public function delete(string $key): void
     {
-        $this->client->delete($key);
+        $this->client->delete($this->prefix . $key);
     }
 }
