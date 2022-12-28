@@ -21,7 +21,6 @@ class CodingDay extends Event
 
     private function isItTheDay(): bool
     {
-        return true;
         $date = new \DateTime();
         return $date->format('l') === 'Thursday';
     }
