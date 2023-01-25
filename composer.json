@@ -3,7 +3,7 @@
   "type": "project",
   "minimum-stability": "stable",
   "require": {
-    "php": "^7.4",
+    "php": "^8.0",
     "ext-curl": "*",
     "ext-json": "*",
     "badfarm/zanzara": "^0.8.0",
