@@ -8,6 +8,10 @@ use BotBoris\Storage\MemcacheStorage;
 
 use Zanzara\Context;
 use Zanzara\Zanzara;
+use Zanzara\Config;
+
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class Bot
 {
@@ -70,11 +74,24 @@ class Bot
 
     private function getClient(): Zanzara
     {
-        return $this->client ??= new Zanzara($this->getToken());
+        return $this->client
+            ??= new Zanzara($this->getToken(), $this->getConfig());
     }
 
     private function getStorage(): Storage
     {
         return $this->storage ??= new MemcacheStorage();
+    }
+
+    public function getConfig(): Config
+    {
+        $config = new Config();
+        $today = date('Y-m-d');
+        $file = __DIR__ . "/../log/$today.log";
+        $handler = new StreamHandler($file, Logger::DEBUG);
+        $logger = new Logger('boris');
+        $logger->pushHandler($handler);
+        $config->setLogger($logger);
+        return $config;
     }
 }
