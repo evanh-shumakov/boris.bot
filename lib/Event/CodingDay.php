@@ -34,16 +34,11 @@ class CodingDay extends Event
 
     private function wasTheEventToday(): bool
     {
-        $lastExecutionTimeStamp = $this->getStorage()->get(self::class);
-        if (! $lastExecutionTimeStamp) {
+        $lastExecution = $this->getLastExecution();
+        if (is_null($lastExecution)) {
             return false;
         }
-        $lastExecution = new \DateTime();
-        $lastExecution->setTimestamp($lastExecutionTimeStamp);
-        $lastExecutionDayNumber = $lastExecution->format('Y-m-d');
-        $today = new \DateTime();
-        $todayDayNumber = $today->format('Y-m-d');
-        return $lastExecutionDayNumber === $todayDayNumber;
+        return $lastExecution->diff(new \DateTime())->h < 24;
     }
 
     private function getBestHabrWeeklyCodingArticle(): ?Article

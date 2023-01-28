@@ -16,6 +16,8 @@ abstract class Event
 
     private Storage $storage;
 
+    private \DateTime $lastExecution;
+
     public static function getAllEvents(): EventCollection
     {
         $fullName = explode('\\', self::class);
@@ -69,7 +71,17 @@ abstract class Event
         foreach ($this->getStorage()->getChatIds() as $chatId) {
             $telegram->sendMessage($this->getMessage(), ['chat_id' => $chatId]);
         }
-        $this->getStorage()->set(static::class, time(), 60 * 60 * 24);
+        $this->updateLastExecution();
+    }
+
+    public function getLastExecution():? \DateTime
+    {
+        return $this->lastExecution ?? null;
+    }
+
+    private function updateLastExecution(): void
+    {
+        $this->lastExecution = new \DateTime();
     }
 
     abstract public function isConditionCompleted(): bool;
