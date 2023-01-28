@@ -97,6 +97,8 @@ class Bot
     {
         $logger = $this->getLogger();
         $config = new Config();
+        $config->setPollingRetry(10);
+        $config->setPollingTimeout(120);
         $config->setLogger($logger);
         return $config;
     }
