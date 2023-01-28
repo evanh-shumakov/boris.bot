@@ -3,7 +3,7 @@
 namespace BotBoris\Collection;
 
 use BotBoris\Event\Event;
-use BotBoris\Storage\Storage;
+use BotBoris\Registry\Registry;
 
 use Zanzara\Zanzara;
 
@@ -14,11 +14,14 @@ class EventCollection implements \Iterator
 
     private int $position = 0;
 
-    public function setBotClient(Zanzara $bot): void
+    private Zanzara $client;
+
+    private Registry $registry;
+
+    public function __construct(Zanzara $client, Registry $registry)
     {
-        foreach ($this->collection as $event) {
-            $event->setClient($bot);
-        }
+        $this->client = $client;
+        $this->registry = $registry;
     }
 
     public function executeAppropriate(): void
@@ -33,6 +36,8 @@ class EventCollection implements \Iterator
     public function add(Event $event): void
     {
         $this->collection[] = $event;
+        $event->setClient($this->client);
+        $event->setRegistry($this->registry);
     }
 
     public function count(): int
@@ -65,12 +70,5 @@ class EventCollection implements \Iterator
     {
         $this->position = 0;
         return $this->current();
-    }
-
-    public function setStorage(Storage $storage): void
-    {
-        foreach ($this->collection as $event) {
-            $event->setStorage($storage);
-        }
     }
 }

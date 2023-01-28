@@ -6,4 +6,6 @@ if (php_sapi_name() !== 'cli') { // only run from command line
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-BotBoris\Bot::run();
+$storage = new \BotBoris\Storage\MemcacheStorage();
+$registry = \BotBoris\Registry\Registry::init($storage);
+BotBoris\Bot::run($registry);

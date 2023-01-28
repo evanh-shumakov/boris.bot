@@ -4,7 +4,7 @@ namespace BotBoris\Event;
 
 use BotBoris\Collection\EventCollection;
 use BotBoris\Filesystem\Filesystem;
-use BotBoris\Storage\Storage;
+use BotBoris\Registry\Registry;
 
 use League\Flysystem\StorageAttributes;
 
@@ -14,19 +14,21 @@ abstract class Event
 {
     private Zanzara $client;
 
-    private Storage $storage;
+    private Registry $registry;
 
     private \DateTime $lastExecution;
 
-    public static function getAllEvents(): EventCollection
-    {
+    public static function getAllEvents(
+        Zanzara $client,
+        Registry $registry
+    ): EventCollection {
         $fullName = explode('\\', self::class);
         $abstractName = array_pop($fullName);
 
         $filesystem = new Filesystem(__DIR__);
         $items = $filesystem->listContents('');
         $fileExtension = '.php';
-        $events = new EventCollection();
+        $events = new EventCollection($client, $registry);
         /** @var StorageAttributes $item */
         foreach ($items as $item) {
             $name = $item->path();
@@ -37,6 +39,7 @@ abstract class Event
             $className = preg_replace($extension, "", $name);
             $fullClassName = __NAMESPACE__ . '\\' . $className;
             if (class_exists($fullClassName) && $className !== $abstractName) {
+                /** @var self $event */
                 $event = new $fullClassName();
                 $events->add($event);
             }
@@ -45,9 +48,9 @@ abstract class Event
         return $events;
     }
 
-    public function setStorage(Storage $storage): void
+    public function setRegistry(Registry $registry): void
     {
-        $this->storage = $storage;
+        $this->registry = $registry;
     }
 
     public function setClient(Zanzara $client): void
@@ -55,9 +58,9 @@ abstract class Event
         $this->client = $client;
     }
 
-    public function getStorage(): Storage
+    public function getRegistry(): Registry
     {
-        return $this->storage;
+        return $this->registry;
     }
 
     public function getClient(): Zanzara
@@ -68,7 +71,7 @@ abstract class Event
     public function execute(): void
     {
         $telegram = $this->getClient()->getTelegram();
-        foreach ($this->getStorage()->getChatIds() as $chatId) {
+        foreach ($this->getRegistry()->getChatIds() as $chatId) {
             $telegram->sendMessage($this->getMessage(), ['chat_id' => $chatId]);
         }
         $this->updateLastExecution();

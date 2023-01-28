@@ -3,8 +3,7 @@
 namespace BotBoris;
 
 use BotBoris\Event\Event;
-use BotBoris\Storage\Storage;
-use BotBoris\Storage\MemcacheStorage;
+use BotBoris\Registry\Registry;
 
 use Zanzara\Context;
 use Zanzara\Zanzara;
@@ -19,23 +18,27 @@ class Bot
 
     private string $token;
 
-    private Storage $storage;
+    private Registry $registry;
 
-    public static function run(): void
+    public static function run(Registry $registry): void
     {
         $boris = new self();
+        $boris->setRegistry($registry);
         $boris->requireToken();
         $boris->chargeEvents();
         $boris->chargeChatIdListener();
         $boris->getClient()->run();
     }
 
+    private function __construct()
+    {
+        /** there is nothing here */
+    }
+
     private function chargeEvents(): void
     {
         $client = $this->getClient();
-        $events = Event::getAllEvents();
-        $events->setBotClient($client);
-        $events->setStorage($this->getStorage());
+        $events = Event::getAllEvents($client, $this->getRegistry());
         $client->getLoop()->addPeriodicTimer(
             60,
             fn() => $events->executeAppropriate()
@@ -47,17 +50,18 @@ class Bot
         $this->getClient()->onUpdate(function (Context $ctx) {
             $chatId = $ctx->getUpdate()?->getEffectiveChat()?->getId();
             if ($chatId) {
-                $this->getStorage()->addChatId($chatId);
+                $this->getRegistry()->addChatId($chatId);
             }
         });
     }
 
     private function requireToken(): void
     {
-        $token = $this->getStorage()->getToken();
+        $registry = $this->getRegistry();
+        $token = $registry->getToken();
         if (! $token) {
             $token = readline("Enter bot token: ");
-            $this->getStorage()->setToken($token);
+            $registry->setToken($token);
         }
         $this->setToken($token);
     }
@@ -78,12 +82,17 @@ class Bot
             ??= new Zanzara($this->getToken(), $this->getConfig());
     }
 
-    private function getStorage(): Storage
+    private function setRegistry(Registry $registry): void
     {
-        return $this->storage ??= new MemcacheStorage();
+        $this->registry = $registry;
     }
 
-    public function getConfig(): Config
+    private function getRegistry(): Registry
+    {
+        return $this->registry;
+    }
+
+    private function getConfig(): Config
     {
         $config = new Config();
         $today = date('Y-m-d');
