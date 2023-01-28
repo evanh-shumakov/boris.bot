@@ -5,6 +5,7 @@ namespace BotBoris;
 use BotBoris\Event\Event;
 use BotBoris\Registry\Registry;
 
+use Psr\Log\LoggerInterface;
 use Zanzara\Context;
 use Zanzara\Zanzara;
 use Zanzara\Config;
@@ -94,13 +95,19 @@ class Bot
 
     private function getConfig(): Config
     {
+        $logger = $this->getLogger();
         $config = new Config();
+        $config->setLogger($logger);
+        return $config;
+    }
+
+    private function getLogger(): LoggerInterface
+    {
         $today = date('Y-m-d');
         $file = __DIR__ . "/../log/$today.log";
         $handler = new StreamHandler($file, Logger::DEBUG);
         $logger = new Logger('boris');
         $logger->pushHandler($handler);
-        $config->setLogger($logger);
-        return $config;
+        return $logger;
     }
 }
