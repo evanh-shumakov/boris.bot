@@ -5,14 +5,13 @@ namespace BotBoris;
 use BotBoris\Event\Event;
 use BotBoris\Registry\Registry;
 
+use Psr\Log\LoggerInterface;
 use Zanzara\Context;
 use Zanzara\Zanzara;
 use Zanzara\Config;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-
-use Psr\Log\LoggerInterface;
 
 class Bot
 {
@@ -96,12 +95,10 @@ class Bot
 
     private function getConfig(): Config
     {
-        $localBotApiServer = 'http://127.0.0.1:8580';
         $logger = $this->getLogger();
         $config = new Config();
         $config->setPollingRetry(10);
         $config->setPollingTimeout(120);
-        $config->setApiTelegramUrl($localBotApiServer);
         $config->setLogger($logger);
         return $config;
     }
