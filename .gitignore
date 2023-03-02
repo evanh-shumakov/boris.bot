@@ -8,3 +8,4 @@ vendor/
 .user.ini
 php.ini
 /log/
+/db.sqlite3
