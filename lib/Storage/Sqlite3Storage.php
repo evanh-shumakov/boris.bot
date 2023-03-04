@@ -10,15 +10,16 @@ class Sqlite3Storage implements Storage
 
     public function __construct()
     {
-        $this->client = new \SQLite3(__DIR__ . '/../../db.sqlite3');
-        $this->client->enableExceptions(true);
+        $this->client = new \SQLite3(
+            __DIR__ . '/../../db.sqlite3',
+            SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE
+        );
         $this->initTables();
     }
 
     public function setToken(string $token): void
     {
-        $this->token = $token;
-        $query = "INSERT INTO parameter (key, value) VALUES ('token', :token)";
+        $query = 'INSERT INTO parameter ("key", "value") VALUES ("token", :token)';
         $result = $this->execute($query, [':token' => $token]);
         if ($result === false) {
             throw new \Exception('Error while inserting token');
@@ -27,7 +28,7 @@ class Sqlite3Storage implements Storage
 
     public function getToken(): string
     {
-        $query = "SELECT value FROM parameter WHERE key = 'token'";
+        $query = 'SELECT value FROM parameter WHERE "key" = "token"';
         $result = $this->execute($query);
         if ($result === false) {
             throw new \Exception('Error while getting token');
@@ -38,7 +39,7 @@ class Sqlite3Storage implements Storage
 
     public function addChatId(string $chatId): void
     {
-        $query = "INSERT INTO chat (chat_id) VALUES (:chat_id)";
+        $query = 'INSERT INTO chat ("chat_id") VALUES (:chat_id)';
         $result = $this->execute($query, [':chat_id' => $chatId]);
         if ($result === false) {
             throw new \Exception('Error while inserting chat id');
@@ -54,7 +55,7 @@ class Sqlite3Storage implements Storage
         }
         $ids = [];
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $ids[] = $row['chat_id'];
+            $ids[] = strval($row['chat_id']);
         }
         return new UniqueStringCollection($ids);
     }
@@ -81,6 +82,5 @@ class Sqlite3Storage implements Storage
             "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             "chat_id" STRING
         )');
-        $this->client->exec('BEGIN');
     }
 }
