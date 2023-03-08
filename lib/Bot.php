@@ -5,13 +5,14 @@ namespace BotBoris;
 use BotBoris\Event\Event;
 use BotBoris\Registry\Registry;
 
-use Psr\Log\LoggerInterface;
 use Zanzara\Context;
 use Zanzara\Zanzara;
 use Zanzara\Config;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+
+use Psr\Log\LoggerInterface;
 
 class Bot
 {
