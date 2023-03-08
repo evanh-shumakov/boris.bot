@@ -25,7 +25,7 @@ class Bot
     {
         $boris = new self();
         $boris->setRegistry($registry);
-        $boris->requireToken();
+        $boris->requireToken(); //todo: if token is not valid, then ask again
         $boris->chargeEvents();
         $boris->chargeChatIdListener();
         $boris->getClient()->run();
@@ -61,7 +61,7 @@ class Bot
         $registry = $this->getRegistry();
         $token = $registry->getToken();
         if (! $token) {
-            $token = readline("Enter bot token: ");
+            $token = $this->readlineSilently("Enter bot token: ");
             $registry->setToken($token);
         }
         $this->setToken($token);
@@ -109,5 +109,17 @@ class Bot
         $logger = new Logger('boris');
         $logger->pushHandler($handler);
         return $logger;
+    }
+
+    private function readlineSilently(string $prompt): string
+    {
+        print $prompt;
+        $disableEcho = 'stty -echo';
+        $enableEcho = 'stty echo';
+        shell_exec($disableEcho);
+        $input = rtrim(fgets(STDIN), PHP_EOL);
+        shell_exec($enableEcho);
+        print "\n";
+        return $input;
     }
 }
