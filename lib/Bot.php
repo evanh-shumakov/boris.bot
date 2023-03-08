@@ -123,7 +123,7 @@ class Bot
         $disableEcho = 'stty -echo';
         $enableEcho = 'stty echo';
         shell_exec($disableEcho);
-        $input = rtrim(fgets(STDIN), PHP_EOL);
+        $input = trim(fgets(STDIN));
         shell_exec($enableEcho);
         print "\n";
         return $input;
