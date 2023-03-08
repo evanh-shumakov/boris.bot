@@ -112,6 +112,11 @@ class Bot
         return $logger;
     }
 
+    /**
+     * Read user input without echoing it to the screen
+     * @param string $prompt
+     * @return string user input
+     */
     private function readlineSilently(string $prompt): string
     {
         print $prompt;
