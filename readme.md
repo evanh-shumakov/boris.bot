@@ -43,10 +43,10 @@ and get a token. Once you have the token, run the bot
 token. Enter the token and the bot will start working. Add bot to any chat where
 you want to test it and send any message, so it can register the chat ID.
 ## Docker
-### run
+### build
 - `$ sudo docker build -t boris-bot .`
+### run
 - `$ sudo docker run -itv "$(pwd):/app" boris-bot`
-
 ### stop
 To stop the container, you can close the terminal window or run the following command in the terminal:
 - `$ docker ps | grep boris-bot | awk '{print $1}' | xargs docker stop`
