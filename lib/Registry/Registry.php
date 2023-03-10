@@ -55,7 +55,7 @@ class Registry
         return $this->storage;
     }
 
-    private function fillPropertiesFromStorage(Storage $storage): void
+    public function fillPropertiesFromStorage(Storage $storage): void
     {
         $this->storage = $storage;
         $this->token = $this->storage->getToken();

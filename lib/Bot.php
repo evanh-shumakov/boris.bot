@@ -5,13 +5,14 @@ namespace BotBoris;
 use BotBoris\Event\Event;
 use BotBoris\Registry\Registry;
 
-use Psr\Log\LoggerInterface;
 use Zanzara\Context;
 use Zanzara\Zanzara;
 use Zanzara\Config;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+
+use Psr\Log\LoggerInterface;
 
 class Bot
 {
@@ -25,7 +26,7 @@ class Bot
     {
         $boris = new self();
         $boris->setRegistry($registry);
-        $boris->requireToken();
+        $boris->requireToken(); //todo: if token is not valid, then ask again
         $boris->chargeEvents();
         $boris->chargeChatIdListener();
         $boris->getClient()->run();
@@ -61,7 +62,7 @@ class Bot
         $registry = $this->getRegistry();
         $token = $registry->getToken();
         if (! $token) {
-            $token = readline("Enter bot token: ");
+            $token = $this->readlineSilently("Enter bot token: ");
             $registry->setToken($token);
         }
         $this->setToken($token);
@@ -97,8 +98,6 @@ class Bot
     {
         $logger = $this->getLogger();
         $config = new Config();
-        $config->setPollingRetry(10);
-        $config->setPollingTimeout(120);
         $config->setLogger($logger);
         return $config;
     }
@@ -111,5 +110,22 @@ class Bot
         $logger = new Logger('boris');
         $logger->pushHandler($handler);
         return $logger;
+    }
+
+    /**
+     * Read user input without echoing it to the screen
+     * @param string $prompt
+     * @return string user input
+     */
+    private function readlineSilently(string $prompt): string
+    {
+        print $prompt;
+        $disableEcho = 'stty -echo';
+        $enableEcho = 'stty echo';
+        shell_exec($disableEcho);
+        $input = trim(fgets(STDIN));
+        shell_exec($enableEcho);
+        print "\n";
+        return $input;
     }
 }

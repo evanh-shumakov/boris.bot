@@ -6,6 +6,7 @@
     "php": "^8.0",
     "ext-curl": "*",
     "ext-json": "*",
+    "ext-sqlite3": "*",
     "badfarm/zanzara": "^0.8.0",
     "league/flysystem": "^2.5",
     "symfony/dom-crawler": "^5.4",
