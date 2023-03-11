@@ -50,4 +50,7 @@ you want to test it and send any message, so it can register the chat ID.
 ### stop
 To stop the container, you can close the terminal window or run the following command in the terminal:
 - `$ docker ps | grep boris-bot | awk '{print $1}' | xargs docker stop`
+### docker-compose
+You can also use docker-compose to run the bot.
+- `$ sudo docker-compose up -d` (-d to run in detached mode)
 
