@@ -4,4 +4,4 @@ services:
     build: .
     volumes:
       - .:/app
-    command: bash -c "composer install && php ./start_bot.php"
+    image: boris-bot
