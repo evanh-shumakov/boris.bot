@@ -44,13 +44,22 @@ token. Enter the token and the bot will start working. Add bot to any chat where
 you want to test it and send any message, so it can register the chat ID.
 ## Docker
 ### build
-- `$ sudo docker build -t boris-bot .`
-### run
-- `$ sudo docker run -itv "$(pwd):/app" boris-bot`
-### stop
-To stop the container, you can close the terminal window or run the following command in the terminal:
-- `$ docker ps | grep boris-bot | awk '{print $1}' | xargs docker stop`
-### docker-compose
-You can also use docker-compose to run the bot.
-- `$ sudo docker-compose up -d` (-d to run in detached mode)
-
+- `$ make build`
+### XDebug (PHPStorm)
+- uncomment XDebug section in Dockerfile and rebuild the image
+- File -> Settings -> PHP:
+    - CLI Interpreter -> ... -> Add -> From Docker -> select `boris-bot` image
+    - CLI Interpreter -> Docker container:
+        - Volume bindings:
+            - Container path: `/app`
+        - Port bindings:
+            - Container port: 8080
+            - Host port: 8080
+    - Servers -> Add:
+        - Name: `docker`
+        - Host: `docker`
+        - Port: `80`
+        - Absolute path on server (for project root): `/app`
+- Set breakpoints in PHPStorm before starting the bot (those breakpoints will be
+  ignored if you set them after the bot has started)
+- Right click on `start_bot.php` -> Debug `start_bot.php` 
