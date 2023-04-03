@@ -1,0 +1,7 @@
+version: '3.9'
+services:
+  boris-bot:
+    build: .
+    volumes:
+      - .:/app
+    image: boris-bot
