@@ -1,4 +1,4 @@
-FROM php:8.0-alpine
+FROM php:8.2-alpine
 
 # Install PHP extensions
 RUN apk add --no-cache zip libzip-dev \
@@ -17,3 +17,5 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 VOLUME ["/app"]
 
 WORKDIR /app
+
+CMD sh -c "php ./start_bot.php"

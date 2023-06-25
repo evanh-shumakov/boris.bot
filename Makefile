@@ -6,3 +6,6 @@ composer-install:
 
 composer-update:
 	docker-compose run --rm boris-bot composer update
+
+run:
+	docker-compose run boris-bot
