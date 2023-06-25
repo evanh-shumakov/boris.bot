@@ -1,4 +1,4 @@
-FROM php:8.0-alpine
+FROM php:8.2-alpine
 
 # Install PHP extensions
 RUN apk add --no-cache zip libzip-dev \
