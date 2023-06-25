@@ -17,3 +17,5 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 VOLUME ["/app"]
 
 WORKDIR /app
+
+CMD sh -c "php ./start_bot.php"
